@@ -9,6 +9,8 @@ mongoose.connect("mongodb://localhost:27017/admin",{
 const userSchema = mongoose.Schema({
     username:{
         type:String,
+
+        
         unique:true,
         required: true
     },
