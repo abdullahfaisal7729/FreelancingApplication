@@ -5,6 +5,7 @@ const Order = require('../models/order');
 const fee = 3.15;
 const async = require('async');
 const passport = require('passport');
+const passportConfig = require('../config/passport');
 
 router.get(
     '/checkout/single-package/:id',
@@ -54,8 +55,6 @@ router.get('/checkout/process_cart', (req, res) => {
             });
         });
 });
-
-
 
 router.get('/users/:id/manage_orders', (req, res, next) => {
     Order.find({ seller: req.user._id })
