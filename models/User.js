@@ -1,41 +1,67 @@
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+ const bcrypt = require('bcrypt-nodejs');
+const mongoose = require('mongoose');
+const crypto = require('crypto');
+const Schema = mongoose.Schema;
 
-mongoose.connect("mongodb://localhost:27017/admin",{
-    useNewUrlParser:true,
-    useUnifiedTopology:true
-})
-
-const userSchema = mongoose.Schema({
-    username:{
-        type:String,
-
-        
-        unique:true,
-        required: true
-    },
-    email:{
-        type:String,
-        unique:true,
-        required:true
-    },
-    password:{
-        type:String,
-        required:true
+const UserSchema = new Schema({
+  email: {
+    type: String,
+    unique: true,
+    lowercase: true
+  },
+  name: String,
+  password: String,
+  photo: String,
+  about: String,
+  gigs: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Gig'
     }
-})
-
-userSchema.pre("save", function(next) {
-    if(!this.isModified("password")) {
-        return next();
+  ],
+  cart: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Gig'
     }
-    this.password = bcrypt.hashSync(this.password, 10);
-    next();
+  ]
 });
 
-userSchema.methods.comparePassword = function(plaintext, callback) {
-    return callback(null, bcrypt.compareSync(plaintext, this.password));
+UserSchema.pre('save', function (next) {
+  var user = this;
+  if (!user.isModified('password')) 
+    return next();
+  if (user.password) {
+    bcrypt
+      .genSalt(10, function (err, salt) {
+        if (err) 
+          return next(err);
+        bcrypt
+          .hash(user.password, salt, null, function (err, hash) {
+            if (err) 
+              return next(err);
+            user.password = hash;
+            next(err);
+          });
+      });
+  }
+});
+
+UserSchema.methods.comparePassword = function (password) {
+
+  return bcrypt.compareSync(password, this.password);
 };
 
-const userModel = mongoose.model('user',userSchema)
-module.exports = userModel
+UserSchema.methods.gravatar = function (size) {
+  if (!size) 
+    size = 200;
+  if (!this.email) 
+    return 'https://gravatar.com/avatar/?s=' + size + '&d=retro';
+  var md5 = crypto
+    .createHash('md5')
+    .update(this.email)
+    .digest('hex');
+  return 'https://gravatar.com/avatar/' + md5 + '?s=' + size + '&d=retro';
+};
+
+module.exports = mongoose.model('User', UserSchema);
