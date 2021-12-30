@@ -11,7 +11,9 @@ const UserSchema = new Schema({
   },
   name: String,
   password: String,
+  role: String,
   photo: String,
+  status: Boolean,
   about: String,
   gigs: [
     {

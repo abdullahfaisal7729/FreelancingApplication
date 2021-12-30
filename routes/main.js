@@ -1,13 +1,17 @@
 const router = require('express').Router();
+const Gig = require('../models/gig');
 const User = require('../models/user');
+const Promocode = require('../models/promocode');
 const async = require('async');
 
+const algoliasearch = require('algoliasearch')
+var client = algoliasearch('B208GQV2JF', '9f799c2601799fed175ca3b4bd9bb598');
+var index = client.initIndex('GigSchema');
 
 //GET request to /
-router.get('/', (req, res, next) => 
-{
+router.get('/', (req, res, next) => {
     Gig
-        .find({}, function (err, gigs) {
+        .find({},function (err, gigs) {
             res.render('main/home', {gigs: gigs})
         })
 });
@@ -29,7 +33,15 @@ router
         res.redirect('/search/?q=' + req.body.search_input)
     })
 
-
+//GET request to /gigs
+router.get('/gigs', (req, res) => {
+    Gig
+        .find({
+            owner: req.user._id
+        }, function (err, gigs) {
+            res.render('main/gigs', {gigs: gigs})
+        })
+});
 
 //Handle GET and POST request to /add-new-gig
 router
@@ -71,6 +83,32 @@ router.get('/service_detail/:id', (req, res, next) => {
         })
 })
 
+//Handle Promo code API
+router.get('/api/add-promocode', (req, res) => {
+    var promocode = new Promocode();
+    promocode.name = "testcoupon";
+    promocode.discount = 0.4;
+    promocode.save(function (err) {
+        res.json("Successfull")
+    })
+})
+
+//Handle Post promocode API
+router.post('/promocode', (req, res) => {
+    var promocode = req.body.promocode;
+    var totalPrice = req.session.price;
+    Promocode.findOne({
+        name: promocode
+    }, function (err, foundCode) {
+        if (foundCode) {
+            var newPrice = foundCode.discount * totalPrice;
+            newPrice = totalPrice - newPrice;
+            req.session.price = newPrice;
+            res.json(newPrice);
+        } else {
+            res.json(0)
+        }
+    });
+});
 
 module.exports = router;
-// these are some comments

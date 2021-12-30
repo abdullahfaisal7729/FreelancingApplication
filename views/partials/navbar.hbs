@@ -9,13 +9,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/">Fiverr-clone</a>
+      <a class="hero-heading" style="margin: 1px 1px 1px 1px" href="/">Viscric</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <!-- HTML Markup -->
-      <div class="aa-input-container" id="aa-input-container" style="margin-top: 3px">
+      <div class="aa-input-container" id="aa-input-container" style="margin: 1px 1px 1px 13px">
         <input type="search" id="aa-search-input" class="aa-input-search" placeholder="Search for any gigs" name="search"
           autocomplete="off" />
         <svg class="aa-input-icon" viewBox="654 -372 1664 1664">
@@ -25,8 +25,8 @@
       <ul class="nav navbar-nav navbar-right">
         {{#if user}}
 
-
-        <li class="dropdown">
+        {{#if user.status}}
+                <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
             Selling
           </a>
@@ -35,6 +35,8 @@
             <li><a href="/gigs">Gigs</a></li>
           </ul>
         </li>
+
+        {{else}}
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
             Buying
@@ -44,12 +46,15 @@
           </ul>
         </li>
 
+        {{/if}}
+
+
         <li class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
             <img class="img-circle" style="width: 32px; height: 32px; margin-top: -7px;" src="{{ user.photo }}">
           </a>
           <ul class="dropdown-menu">
-            <li><a href="/profile">{{ user.name }}</a></li>
+            <li><a href="/profile">My Profile</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="/logout">Logout</a></li>
           </ul>

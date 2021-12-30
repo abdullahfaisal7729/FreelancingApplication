@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { use } = require('passport');
 const passport = require('passport');
 const passportConfig = require('../config/passport');
 const User = require('../models/user');
@@ -20,10 +21,18 @@ router
           req.flash('errors', 'Account with that email address already exists.');
           return res.redirect('/signup');
         } else {
+          console.log(req.body);
           var user = new User();
           user.name = req.body.username;
           user.email = req.body.email;
           user.photo = user.gravatar();
+          user.role=req.body.menu;
+          if(user.role=='freelancer'){
+            user.status=true;
+          }
+          else{
+            user.status=false;
+          }
           user.password = req.body.password;
           user.save(function (err) {
             if (err) 
@@ -55,6 +64,14 @@ router
     failureFlash: true // allow flash messages
   }));
 
+/* PROFILE ROUTE */
+router.get('/profile', passportConfig.isAuthenticated, (req, res, next) => {
+  res.render('accounts/profile');
+});
 
+router.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
 
 module.exports = router;
