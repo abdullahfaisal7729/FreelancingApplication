@@ -1,5 +1,5 @@
 const secret = {
-    port: 3000,
+    port: 5000,
     secret: "testing",
     database: "mongodb://localhost:27017/", 
     algolia_appId: "K2BR4L1KSN", 
