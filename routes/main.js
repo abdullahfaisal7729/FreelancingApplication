@@ -19,6 +19,7 @@ router.get('/', (req, res, next) => {
 router
     .route('/search')
     .get((req, res) => {
+//        console.log("GET condition: Search Block")
         if (req.query.q) {
             index
                 .search(req.query.q, function (err, content) {
@@ -30,6 +31,7 @@ router
         }
     })
     .post((req, res) => {
+  //      console.log("POST condition: Search Block**********")
         res.redirect('/search/?q=' + req.body.search_input)
     })
 
